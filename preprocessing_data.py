@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
-from connect_database import SessionLocal, engine, User_data, Post_text
+from connect_database import SessionLocal, engine, User_data, Post
 
 
 
@@ -64,24 +64,11 @@ def posts_processing(input_data):
 
 def feed_processing(input_data):
     df = input_data.copy()
-    df = feed_df.groupby(['user_id', 'post_id'], as_index=False).sum()
+    df = df.groupby(['user_id', 'post_id'], as_index=False).sum()
     df['target'] = df['target'].apply(lambda x: int(x > 0))
     df['user_id'].nunique(), df['post_id'].nunique()
     return df
 
-def get_df_to_predict(user_id):
-    users_matrix = np.repeat(users_data[users_data['user_id'] == user_id].values[:1,:],
-                             7023,
-                             axis=0)
-
-    posts_matrix = posts_data.values
-
-    X = pd.DataFrame(np.concatenate((users_matrix, posts_matrix), axis=1),
-                     columns=users_data.columns.tolist() + posts_data.columns.tolist())
-    X['exp_group'] = X['exp_group'].astype(np.int32)
-    X['city'] = X['city'].astype(np.int32)
-
-    return X.drop(['user_id', 'post_id'], axis=1)
 
 def push_processed_data():
     if __name__ == '__main__':

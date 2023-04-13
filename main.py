@@ -1,25 +1,14 @@
-import os
 from typing import List
-
-from sqlalchemy import Column, Integer, String, DateTime, create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-
-
-import numpy as np
 from fastapi import FastAPI, Depends
-from schema import PostGet
 from datetime import datetime
-from sqlalchemy import create_engine
 import pandas as pd
+import numpy as np
 from catboost import CatBoostClassifier
 
-app = FastAPI()
+from connect_database import engine, Post, Session, SessionLocal
+from schema import PostGet
 
-engine = create_engine(
-        "postgresql://robot-startml-ro:pheiph0hahj1Vaif@"
-        "postgres.lab.karpov.courses:6432/startml",
-    pool_size = 100, max_overflow = 100)
+app = FastAPI()
 
 users_data = pd.read_sql('SELECT * from pobol_user10_features',engine).drop('index',axis=1)
 posts_data = pd.read_sql('SELECT * from pobol_post10_features',engine).drop('index',axis=1)
@@ -40,42 +29,21 @@ def get_df_to_predict(user_id):
 
 catboost_model = CatBoostClassifier()
 
-def get_model_path(path: str) -> str:
-    if os.environ.get("IS_LMS") == "1":
-        MODEL_PATH = '/workdir/user_input/model'
-    else:
-        MODEL_PATH = path
-    return MODEL_PATH
-
-catboost_model.load_model(get_model_path('models\catboost_model'))
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-def get_db():
-    with SessionLocal() as db:
-        return db
-
-Base = declarative_base()
-
-class Post(Base):
-    __tablename__ = 'post'
-    id = Column(Integer, primary_key=True)
-    text = Column(String)
-    topic = Column(String)
+catboost_model.load_model('models\catboost_model')
 
 @app.get("/post/recommendations/", response_model=List[PostGet])
 def recommended_posts(
-		id: int,
-        time: datetime,
-		limit: int = 5,
-        db: Session = Depends(get_db)) -> List[PostGet]:
+		id: int) -> List[PostGet]:
+
     X = get_df_to_predict(id)
 
     predicts = pd.DataFrame(catboost_model.predict_proba(X)[:, 1], columns=['like_prob'])
-    predicts['post_id'] = posts_data['post_id']
+    predicts['post_id'] = p osts_data['post_id']
     recommended_post_ids = list(predicts.sort_values(by='like_prob', ascending=False).iloc[:5, 1])
 
-    return db.query(Post)\
+    with SessionLocal() as session:
+        return session.query(Post)\
                   .filter(Post.id.in_(recommended_post_ids))\
                   .limit(5).all()
 
+print(recommended_posts(201))

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 SQLALCHEMY_DATABASE_URL = "postgresql://robot-startml-ro:pheiph0hahj1Vaif@postgres.lab.karpov.courses:6432/startml"
 
@@ -8,10 +8,6 @@ SQLALCHEMY_DATABASE_URL = "postgresql://robot-startml-ro:pheiph0hahj1Vaif@postgr
 engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_size = 100, max_overflow = 100)
 # настройка класса Session c требуемыми настройками
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-def get_db():
-    with SessionLocal() as db:
-        return db
 
 Base = declarative_base()
 
@@ -27,9 +23,9 @@ class User_data(Base):
     source = Column(String)
 
 
-class Post_text(Base):
-    __tablename__ = 'post_text_df'
-    post_id = Column(Integer, primary_key=True)
+class Post(Base):
+    __tablename__ = 'posts'
+    id = Column(Integer, primary_key=True)
     text = Column(String)
     topic = Column(String)
 
