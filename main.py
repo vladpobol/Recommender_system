@@ -38,7 +38,7 @@ def recommended_posts(
     X = get_df_to_predict(id)
 
     predicts = pd.DataFrame(catboost_model.predict_proba(X)[:, 1], columns=['like_prob'])
-    predicts['post_id'] = p osts_data['post_id']
+    predicts['post_id'] = posts_data['post_id']
     recommended_post_ids = list(predicts.sort_values(by='like_prob', ascending=False).iloc[:5, 1])
 
     with SessionLocal() as session:
