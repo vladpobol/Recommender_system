@@ -8,8 +8,11 @@ pydantic==1.9.1
 scikit_learn==1.1.1
 lightgbm==2.0.3
 xgboost==1.6.1
+transformers==4.29.2
+torch==2.0.1
 psycopg2-binary==2.9.3
 uvicorn==0.16.0
 category-encoders==2.5.0
 loguru==0.6.0
 implicit==0.5.2
+pynvim
