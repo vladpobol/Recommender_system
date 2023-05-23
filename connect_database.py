@@ -5,7 +5,7 @@ import psycopg2
 import numpy as np
 import pandas as pd
 
-DATABASE_URI = "postgresql://robot-startml-ro:pheiph0hahj1Vaif@postgres.lab.karpov.courses:6432/startml"
+DATABASE_URI = # UTI ВАШЕЙ БД
 
 engine = create_engine(DATABASE_URI)
 # настройка класса Session c требуемыми настройками
