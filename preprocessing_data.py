@@ -1,7 +1,14 @@
 import pandas as pd
+import numpy as np
+import os
+import re
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 from sklearn.preprocessing import LabelEncoder
+from sklearn.cluster import KMeans, DBSCAN
+from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
-from connect_database import SessionLocal, engine, User_data, Post
+from connect_database import engine, get_data_with_sqlalchemy
 
 
 
@@ -29,39 +36,6 @@ def users_processing(input_data):
     return df
 
 
-def posts_processing(input_data):
-    '''извлекаем из текста численные признаки с помощью TF-IDF,
-       берем топ 100 слова с наибольшей суммой TF-IDF по всем объектам,
-       кодируем колонку 'topic' через OneHotEncoder
-    '''
-    df = input_data.copy()
-    tf_idf = TfidfVectorizer()
-    tf_idf.fit(df['text'])
-    tfidf_dataframe = pd.DataFrame(tf_idf.transform(df['text']).todense(),
-                                columns=tf_idf.get_feature_names_out())
-
-    not_important_words = ['that', 'this', 'https', 'with','about','have','what',
-                        'than','there','from','will','they','were','which','their',
-                        'when','those','these','does']
-
-    important_words = [col for col in tfidf_dataframe.columns\
-                    if len(col) > 3 and\
-                    (col not in not_important_words)]
-
-    top_100_words = tfidf_dataframe[important_words]\
-                                    .sum()\
-                                    .sort_values(ascending=False)\
-                                    [:100]\
-                                    .index.tolist()
-
-    ohe_topic_col = pd.get_dummies(df['topic'], drop_first=True, prefix='topic')
-
-    result_df = pd.concat((tfidf_dataframe[top_100_words], ohe_topic_col), axis=1)
-    return result_df.set_index(df['post_id'])\
-                    .reset_index()\
-                    .rename(columns={'index':'post_id'})
-
-
 def feed_processing(input_data):
     df = input_data.copy()
     df = df.groupby(['user_id', 'post_id'], as_index=False).sum()
@@ -69,17 +43,119 @@ def feed_processing(input_data):
     df['user_id'].nunique(), df['post_id'].nunique()
     return df
 
+# ПРЕДОБРАБОТКА ТЕКСТА
+
+# Удаляем лишние символы
+def del_symbols(text):
+    text = text.replace('\n\n', ' ').replace('\n', ' ') # заменяем символы переноса строки на пробел
+    text = re.sub(r'[^a-zA-Z\s]', '', text) # убираем все символы кроме букв и пробелов
+    text = text.lower() # приводим к нижнему регистру
+    
+    return text
+
+
+stop_words = stopwords.words('english')
+
+# Удаляем стоп-слова
+def del_stopwords(text):
+    important_words = [word for word in text.split() if word not in stop_words]
+    
+    return ' '.join(important_words)
+
+
+# Лемматизируем слова
+wnl = WordNetLemmatizer()
+
+def lemmatize(text):
+    lemm_words = [wnl.lemmatize(word) for word in text.split()]
+    
+    return ' '.join(lemm_words) 
+
+
+def get_TFIDF_features(series):
+    series = series.apply(del_symbols)\
+                   .apply(del_stopwords)\
+                   .apply(lemmatize)
+
+    tf_idf = TfidfVectorizer().fit(series)
+    # создаем tf-idf индексы для текстов 
+    tfidf_dataframe = pd.DataFrame(tf_idf.transform(series).todense(),
+                                columns=tf_idf.get_feature_names_out())
+
+    centered = tfidf_dataframe - tfidf_dataframe.mean()
+    # Уменьшаем размерность 
+    pca_from_tf_idf = PCA(n_components=50).fit_transform(centered)
+    
+    del tf_idf, centered, tfidf_dataframe
+    
+    kmeans = KMeans(n_clusters=15, random_state=0).fit(pca_from_tf_idf)
+
+    features_from_tfidf = pd.DataFrame(data=kmeans.transform(pca_from_tf_idf),
+                                   columns=[f'DistanceTo{cls}thCluster' for cls in set(kmeans.labels_)])
+    features_from_tfidf['tf_idf_cluster'] = kmeans.labels_
+
+    return features_from_tfidf
+
+
+
+def get_features_from_embeddings():
+    
+    os.chdir('BERT_embeddings')
+    embeddings = np.load(os.listdir()[-1])
+    os.chdir('..')
+
+    centered = embeddings - embeddings.mean()
+
+    # понижаем размерность ембедингов
+    pca = PCA(n_components=50)
+    pca_decomp = pca.fit_transform(centered)
+
+    # кластеризуем главные компоненты с помощью KMeans
+    kmeans = KMeans(n_clusters=15, random_state=0).fit(pca_decomp)
+
+    # кластеризуем ембединги без понижения размерности 
+    dbscan = DBSCAN(eps=3).fit(embeddings)
+
+    dists_columns = [f'DistanceToCluster_{i}' for i in range(15)]
+
+    dists_df = pd.DataFrame(
+        data=kmeans.transform(pca_decomp),
+        columns=dists_columns)
+
+    dists_df['dbscan_clusters'] = dbscan.labels_
+    dists_df['kmeans_clusters'] = kmeans.labels_
+
+    return dists_df
+
 
 def push_processed_data():
-    if __name__ == '__main__':
-        with SessionLocal() as session:
-            user_data_df = pd.read_sql(session.query(User_data).limit(200000).statement, session.bind)
-            posts_df = pd.read_sql(session.query(Post_text).limit(200000).statement, session.bind)
+    users_df = get_data_with_sqlalchemy('user_data', 200000)
+    posts_df = get_data_with_sqlalchemy('posts', 200000)
+    
+    
+    one_hot_topics = pd.get_dummies(posts_df['topic'], drop_first=True)
+    tf_idf_features = get_TFIDF_features(posts_df['text'])
+    embeddings_features = get_features_from_embeddings()
 
-            users_df_processed = users_processing(user_data_df)
-            post_df_processed = posts_processing(posts_df)
+    users_df_processed = users_processing(users_df)
 
-            users_df_processed.to_sql('pobol_user10_features', con=engine)
-            post_df_processed.to_sql('pobol_post10_features', con=engine)
+    posts_df_control_model = pd.concat((posts_df['id'], 
+                                        tf_idf_features,
+                                        one_hot_topics), 
+                                        axis=1).rename(columns={'id':'post_id'})
 
-push_processed_data()
+    posts_df_test_model = pd.concat((posts_df['id'], # столбец индексов
+                                     embeddings_features, # кластеризованные ембединги 
+                                     tf_idf_features, # кластеризованные tf-idf
+                                     one_hot_topics),
+                                     axis=1)
+    
+#    users_df_processed.to_sql('pobol_users_df_control_11', con=engine)
+    posts_df_control_model.to_sql('pobol_posts_df_control_10', con=engine)
+    posts_df_test_model.to_sql('pobol_posts_df_test_10', con=engine)
+    
+
+if __name__ == '__main__':
+    push_processed_data()
+
+
