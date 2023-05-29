@@ -150,9 +150,9 @@ def push_processed_data():
                                      one_hot_topics),
                                      axis=1)
     
-#    users_df_processed.to_sql('pobol_users_df_control_11', con=engine)
-    posts_df_control_model.to_sql('pobol_posts_df_control_10', con=engine)
-    posts_df_test_model.to_sql('pobol_posts_df_test_10', con=engine)
+    users_df_processed.to_sql('pobol_users_df_proc', con=engine)
+    posts_df_control_model.to_sql('pobol_posts_df_proc_control', con=engine)
+    posts_df_test_model.to_sql('pobol_posts_df_proc_test', con=engine)
     
 
 if __name__ == '__main__':
