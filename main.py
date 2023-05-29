@@ -21,7 +21,7 @@ posts_df_for_test = pd.read_sql('SELECT * from pobol_posts_df_proc_test', engine
 def get_df_to_predict(user_id, exp_group): 
     '''
     Берем данные пользователя, делаем из них N одинаковых строк для каждого поста,
-    чтобы получить вероятность для всех постов
+    чтобы получить вероятность для всех постов 
     и мерджим с тестовым или контрольным posts_df
     '''
 
@@ -31,7 +31,8 @@ def get_df_to_predict(user_id, exp_group):
         posts_data = posts_df_for_test
     else:
         raise ValueError('Unknown group')
-    
+   
+
     users_matrix = np.repeat(users_data[users_data['user_id'] == user_id].values[:1,:],
                              posts_data.shape[0],
                              axis=0)
