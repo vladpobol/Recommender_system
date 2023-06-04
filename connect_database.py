@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, create_engine
+from sqlalchemy import Column, Integer, String, DateTime, create_engine, inspect
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 import psycopg2
@@ -10,6 +10,8 @@ DATABASE_URI = # UTI ВАШЕЙ БД
 engine = create_engine(DATABASE_URI)
 # настройка класса Session c требуемыми настройками
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+inspector = inspect(engine) # чтобы подтянуть названия колонок
 
 Base = declarative_base()
 
@@ -48,33 +50,43 @@ def get_data_with_psycopg(query: str):
     cursor = conn.cursor()
     cursor.execute(query)
     result = cursor.fetchall()
-
+    
+    columns = [desc[0] for desc in cursor.description]
+    
     cursor.close()
     conn.close()
 
-    return np.array(result)
+    result = pd.DataFrame(data=result,
+                        columns=columns)
 
-def get_data_with_sqlalchemy(table: str, limit):
+    if 'index' in columns:
+        result.drop('index', axis=1, inplace=True)
+    if 'id' in columns:
+        result.rename(columns={'id':'post_id'}, inplace=True)
+
+    return result
+
+def get_data_with_sqlalchemy(table_name: str, limit):
     '''С помощью SQLAlchemy и указанием таблица и лимита
 возвращает таблицу из базы с заданным лимитом
-     
-     user == user_data
-     post == posts
-     feed == feed_data'''
+user_data
+posts
+feed_data'''
 
     table_dict = {
-            'user': User_data,
-            'post': Post,
-            'feed': Feed_data
+            'user_data': User_data,
+            'posts': Post,
+            'feed_data': Feed_data
             }
+    table = table_dict[table_name]
+
     with SessionLocal() as session:
-        data_from_db = session.query(table_dict[table]).limit(limit).all()
+        data_from_db = session.query(table).limit(limit).all()
 
-    return pd.DataFrame([item.__dict__ for item in data_from_db]).iloc[:,1:]# в первой колонке находятся экземпляры класса нашей таблицы, выкидываем их и оставляем только фичи
-
-
+    columns_name = [column['name'] for column in inspector.get_columns(table_name)]
+    
+    return pd.DataFrame([item.__dict__ for item in data_from_db])[columns_name]
 
 if __name__ == "__main__":
     Base.metadata.create_all(engine)
 
-print(type(get_data_with_psycopg('SELECT * from pobol_user10_features')))

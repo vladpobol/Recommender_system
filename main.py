@@ -8,15 +8,17 @@ import numpy as np
 import os
 from catboost import CatBoostClassifier
 
-from connect_database import engine, Post, Session, SessionLocal
+from connect_database import get_data_with_psycopg, SessionLocal
 from schema import PostGet
 
 app = FastAPI()
 
-users_data = pd.read_sql('SELECT * from pobol_user10_features',engine).drop('index',axis=1)
+users_data = get_data_with_psycopg('SELECT * from pobol_user10_features')
 
-posts_df_for_control =  pd.read_sql('SELECT * from pobol_posts_df_proc_control', engine).drop('index', axis=1).rename(columns={'id':'post_id'})
-posts_df_for_test = pd.read_sql('SELECT * from pobol_posts_df_proc_test', engine).drop('index', axis=1).rename(columns={'id':'post_id'})
+posts_df_for_control =  get_data_with_psycopg('SELECT * from pobol_posts_df_proc_control')
+posts_df_for_test = get_data_with_psycopg('SELECT * from pobol_posts_df_proc_test')
+
+print(posts_df_for_test)
 
 def get_df_to_predict(user_id, exp_group): 
     '''
