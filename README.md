@@ -3,25 +3,54 @@
 * #### __Решаемая задача__ - Обычно у социальной сети есть пользователи и какой-либо контент, который мы хотим им рекоммендовать максимально качественно, так чтобы интересующие нас метрики росли, именно эту цель и преследует мой проект.
 * #### __Используемый стек__ - `Python` `FastAPI` `Psycopg2` `SQLAlchemy`, `Pandas` `Numpy` `Sklearn` `CatBoost` `Transformers` `PyTorch`
 
+## [`Подключение к базе и выгрузка данных`](https://github.com/vladpobol/Recommender_system/blob/master/connect_database.py "посмотреть код")
 
+* ❗ Перед использованием кода необходимо указать URI вашей базы данных в переменной DATABASE_URI.
+* С целью практики в этом файле реализовано два способа подключения к базе данных, через psycopg и sqlalchemy.
+* Выгрузка через psycopg `get_data_with_psycopg` используется для выгрузки уже предобработанных данных.
+* Выгрузка через sqlalchemy `get_data_with_sqlalchemy` используется для выгрузки исходных данных с последующей предобработкой. 
 
-## Подключение к базе данных
-[`connect_database`](https://github.com/vladpobol/Recommender_system/blob/master/connect_database.py "посмотреть код")
+## [`Предобработка данных`](https://github.com/vladpobol/Recommender_system/blob/master/preprocessing_data.py "посмотреть код")
 
-* С целью практики в этом файле реализовано два способа подключения к базе данных
-* 
+1. Подготовка данных про пользователей:
+    - Все колонки, в которых менее 15 уникальных значений будем кодировать через `OneHotEnсoding`.
+    - Те, в которых больше через LabelEncoder.
+      
+2. Подготовка текстов:
+    - Удаление лишних символов (пробелы, знаки припинания).
+    - Удаление стоп-слов, с помощью библиотеки `nltk` импортируем список неважных слов для английского языка и убираем их.
+    - Лемматизация, используем `WordNetLemmatizer` из библиотеки `nltk` для приведения всех слов к общей форме.
+      
+3. Достаем признаки из TF-IDF:
+    - Формируем большую матрицу с TF-IDF коэффициентами для каждого слова по всем текстам, в итоговой таблице более чем 60 тысяч колонок.
+    - Вычитаем из них среднее и уменьшаем их размерность с помощью метода главных компонент `PCA`, на выходе имеем 50 колонок.
+    - Кластеризуем их с помощью `KMeans`, получим разбиение на 15 кластеров.
+    - Посчитаем расстояние до каждого кластера.
+      
+4. Извлекаем признаки из ембеддингов:
+    - Загружаем ембеддинги. (процесс их извлечения рассмотрен в следующей главе)
+    - Вычитаем среднее и уменьшаем размерность до 50 колонок.
+    - Выделяем 15 кластеров через `KMeans` и считаем расстояния до кластеров.
+   
+## [`Получение ембедингов постов с помощью BERT`](https://github.com/vladpobol/Recommender_system/blob/master/get_embeddings_with_BERT.py "посмотреть код")
 
-## Предобработка данных
-[`preprocessing_data`](https://github.com/vladpobol/Recommender_system/blob/master/preprocessing_data.py "посмотреть код")
+* Подготавливаем тексты.
+* Будем использовать предобученую модель и токенайзер.
+* Токенизация слов будем происходить на стадии создания датасета.
+* Проходимся по текстам и получаем ембединги.
+* Загружаем их в папку "BERT_embeddings".
 
-## Получение ембедингов постов с помощью BERT
-[`get_embeddings_with_BERT`](https://github.com/vladpobol/Recommender_system/blob/master/get_embeddings_with_BERT.py "посмотреть код")
+## [`Обучение моделей`](https://github.com/vladpobol/notebooks/blob/main/Recommender_system/train_models.ipynb "посмотреть ноутбук")
 
-## Анализ результатов A/B тестирования
-[`analysis_of_ab_test_results`](https://github.com/vladpobol/notebooks/blob/main/Recommender_system/analysis_of_ab_test_results.ipynb "посмотреть ноутбук")
+* Я обучил две модели.
+* **Первая** - для обучения использованы только признаки из TF-IDF.
+* **Вторая** - использованы TF-IDF и фичи из ембеддингов.
 
-## Обучение моделей
-[`train_models`](https://github.com/vladpobol/notebooks/blob/main/Recommender_system/train_models.ipynb "посмотреть ноутбук")
+## [`Анализ результатов A/B тестирования`](https://github.com/vladpobol/notebooks/blob/main/Recommender_system/analysis_of_ab_test_results.ipynb "посмотреть ноутбук")
+
+* **пвпа** 
+* вф
+  
 
 
 
