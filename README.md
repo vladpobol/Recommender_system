@@ -15,13 +15,13 @@
 [`preprocessing_data`](https://github.com/vladpobol/Recommender_system/blob/master/preprocessing_data.py "посмотреть код")
 
 ## Получение ембедингов постов с помощью BERT
-[`get_embeddings_with_BERT`](
+[`get_embeddings_with_BERT`](https://github.com/vladpobol/Recommender_system/blob/master/get_embeddings_with_BERT.py "посмотреть код")
 
 ## Анализ результатов A/B тестирования
 [`analysis_of_ab_test_results`](https://github.com/vladpobol/notebooks/blob/main/Recommender_system/analysis_of_ab_test_results.ipynb "посмотреть ноутбук")
 
 ## Обучение моделей
-['train_models'](https://github.com/vladpobol/notebooks/blob/main/Recommender_system/train_models.ipynb "посмотреть ноутбук")
+[`train_models`](https://github.com/vladpobol/notebooks/blob/main/Recommender_system/train_models.ipynb "посмотреть ноутбук")
 
 
 
