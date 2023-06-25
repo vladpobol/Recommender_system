@@ -62,7 +62,7 @@
 
 ## [`Анализ результатов A/B тестирования`](https://github.com/vladpobol/notebooks/blob/main/Recommender_system/analysis_of_ab_test_results.ipynb "посмотреть ноутбук")
 
-* Необходимо было понять значимо ли различаются модели по целевым метрикам.
+* Необходимо было понять значимо ли различаются модели по целевым метрикам:
      - Hitrate
 
        <img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/hitrate_models.jpeg">
