@@ -1,6 +1,6 @@
 # Рекомендательная система
 
-<img src="https://github.com/vladpobol/Recommender_system/blob/master/diag_1.jpg" alt="Header">
+<img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/diag_1.jpg" alt="Header">
 
 * #### __Решаемая задача__ - Обычно у социальной сети есть пользователи и какой-либо контент, который мы хотим им рекоммендовать максимально качественно, так чтобы интересующие нас метрики росли, именно эту цель и преследует мой проект.
 * #### __Используемый стек__ - `Python` `FastAPI` `Psycopg2` `SQLAlchemy`, `Pandas` `Numpy` `Sklearn` `CatBoost` `Transformers` `PyTorch`
@@ -45,10 +45,16 @@
 ## [`Обучение моделей`](https://github.com/vladpobol/notebooks/blob/main/Recommender_system/train_models.ipynb "посмотреть ноутбук")
 
 1. **Первая модель**
+   
+   <img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/control_model.jpeg" width="500">
+   
       - для обучения использованы только признаки из TF-IDF.
       - кластеризация с помощью KMeans.
   
-2. **Вторая модель** - использованы TF-IDF и фичи из ембеддингов.
+3. **Вторая модель** - использованы TF-IDF и фичи из ембеддингов.
+      
+   <img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/test model.jpeg" width="500">
+   
       - Использованы признаки из ембеддингов и TF-IDF.
       - Кластеризация с помощью DBSCAN и KMeans.
         
@@ -58,7 +64,15 @@
 
 * Необходимо было понять значимо ли различаются модели по целевой метрике.
 * Hitrate лучшей модели на тестовых данных составил 0.6.
-* Модели сравнивались по двум метрикам, хитрейт и среднее количество лайков на юзера.
+* Модели сравнивались по двум метрикам
+     - Hitrate
+
+       <img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/hitrate_models.jpeg">
+
+     - Среднее количество лайков на пользователя
+ 
+       <img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/mean_count_likes.jpeg">
+  
 * Были затетектированы статистически значемые разлиичия.
   
 
