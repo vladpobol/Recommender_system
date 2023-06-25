@@ -1,6 +1,6 @@
 # Рекомендательная система
 
-<img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/diag_1.jpg" alt="Header">
+<img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/diag_1.drawio.png" alt="Header">
 
 * #### __Решаемая задача__ - Обычно у социальной сети есть пользователи и какой-либо контент, который мы хотим им рекоммендовать максимально качественно, так чтобы интересующие нас метрики росли, именно эту цель и преследует мой проект.
 * #### __Используемый стек__ - `Python` `FastAPI` `Psycopg2` `SQLAlchemy`, `Pandas` `Numpy` `Sklearn` `CatBoost` `Transformers` `PyTorch`
