@@ -1,16 +1,15 @@
+from typing import List
+from schema import Response
+from fastapi import FastAPI
 import hashlib
 from datetime import datetime
-
-import numpy as np
 import pandas as pd
-
+import numpy as np
+import os
 from catboost import CatBoostClassifier
-from fastapi import FastAPI
-import uvicorn 
-from schema import PostGet, Response
-from typing import List
 
 from connect_database import get_data_with_psycopg, SessionLocal
+from schema import PostGet
 
 app = FastAPI()
 
@@ -19,6 +18,7 @@ users_data = get_data_with_psycopg('SELECT * from pobol_user10_features')
 posts_df_for_control =  get_data_with_psycopg('SELECT * from pobol_posts_df_proc_control')
 posts_df_for_test = get_data_with_psycopg('SELECT * from pobol_posts_df_proc_test')
 
+print(posts_df_for_test)
 
 def get_df_to_predict(user_id, exp_group): 
     '''
@@ -103,5 +103,4 @@ def recommended_posts(
                                            .limit(limit).all())
 
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+
