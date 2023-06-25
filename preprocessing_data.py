@@ -10,8 +10,6 @@ from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 from connect_database import engine, get_data_with_sqlalchemy
 
-
-
 def users_processing(input_data):
     '''кодирует категориальные фичи,
        те что имеют менее 15 уникальных значений через OneHotEncoding,
@@ -20,13 +18,16 @@ def users_processing(input_data):
     df = input_data.copy()
 
     for col in df.columns:
+        
         if df[col].dtype == 'O':
+            
             if df[col].nunique() < 15:
                 ohe_col = pd.get_dummies(df[col], drop_first=True)
                 df = pd.concat((df, ohe_col), axis=1)
                 df.drop(col, axis=1, inplace=True)
             else:
                 df[col] = LabelEncoder().fit_transform(df[col])
+                
     # модель училась на датасете где gender стоит первой колонкой, чтобы не переучивать ее втыкаю костыль
     gender_col = df[['gender']].copy()
     df.drop('gender', axis=1, inplace=True)
@@ -53,7 +54,6 @@ def del_symbols(text):
     
     return text
 
-
 stop_words = stopwords.words('english')
 
 # Удаляем стоп-слова
@@ -61,7 +61,6 @@ def del_stopwords(text):
     important_words = [word for word in text.split() if word not in stop_words]
     
     return ' '.join(important_words)
-
 
 # Лемматизируем слова
 wnl = WordNetLemmatizer()
@@ -97,7 +96,6 @@ def get_TFIDF_features(series):
     return features_from_tfidf
 
 
-
 def get_features_from_embeddings():
     
     os.chdir('BERT_embeddings')
@@ -131,7 +129,6 @@ def get_features_from_embeddings():
 def push_processed_data():
     users_df = get_data_with_sqlalchemy('user_data', 200000)
     posts_df = get_data_with_sqlalchemy('posts', 200000)
-    
     
     one_hot_topics = pd.get_dummies(posts_df['topic'], drop_first=True)
     tf_idf_features = get_TFIDF_features(posts_df['text'])
