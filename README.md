@@ -73,7 +73,7 @@
  
        <img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/mean_count_likes.jpeg">
   
-* Были задетектированы статистически значемые различия.
+* Были задетектированы статистически значимые различия.
   
 
 
