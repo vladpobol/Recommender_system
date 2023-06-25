@@ -8,9 +8,9 @@
 ## [`Подключение к базе и выгрузка данных`](https://github.com/vladpobol/Recommender_system/blob/master/connect_database.py "посмотреть код")
 
 * ❗ Перед использованием кода необходимо указать URI вашей базы данных в переменной DATABASE_URI.
-* С целью практики в этом файле реализовано два способа подключения к базе данных, через psycopg и sqlalchemy.
-* Выгрузка через psycopg `get_data_with_psycopg` используется для выгрузки уже предобработанных данных.
-* Выгрузка через sqlalchemy `get_data_with_sqlalchemy` используется для выгрузки исходных данных с последующей предобработкой. 
+* С целью практики в этом файле реализовано два способа подключения к базе данных: через psycopg и sqlalchemy.
+* `get_data_with_psycopg` используется для выгрузки уже предобработанных данных.
+* `get_data_with_sqlalchemy` используется для выгрузки исходных данных с последующей предобработкой. 
 
 ## [`Предобработка данных`](https://github.com/vladpobol/Recommender_system/blob/master/preprocessing_data.py "посмотреть код")
 
