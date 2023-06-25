@@ -1,6 +1,6 @@
 # Рекомендательная система
 
-<img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/diag_1.drawio.png" alt="Header">
+<img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/diag_1.png" alt="Header">
 
 * #### __Решаемая задача__ — по запросу рекомендовать пользователю 5 постов, максимизируя при этом hitrate.
 * #### __Используемый стек__ — `Python` `FastAPI` `Psycopg2` `SQLAlchemy` `Pandas` `Numpy` `Sklearn` `CatBoost` `Transformers`
