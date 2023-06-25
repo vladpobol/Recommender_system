@@ -12,8 +12,6 @@ import os
 from connect_database import get_data_with_sqlalchemy
 from preprocessing_data import del_symbols, del_stopwords, lemmatize 
 
-
-
 posts_df = get_data_with_sqlalchemy('posts', 200000)
 
 posts_df['text'] = post_df['text'].apply(del_symbols)\
@@ -50,7 +48,6 @@ dataset = PostDataset(posts_df['text'].values.tolist(), tokenizer)# токени
 data_collator = DataCollatorWithPadding(tokenizer=tokenizer) # для приведения текстов к одинаковой длинне
 
 loader = DataLoader(dataset, batch_size=32, collate_fn=data_collator, pin_memory=True, shuffle=False)
-
 
 
 @torch.inference_mode()# отключаем расчет градиента
