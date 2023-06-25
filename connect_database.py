@@ -27,7 +27,6 @@ class User_data(Base):
     os = Column(String)
     source = Column(String)
 
-
 class Post(Base):
     __tablename__ = 'posts'
     id = Column(Integer, primary_key=True)
@@ -41,6 +40,7 @@ class Feed_data(Base):
     post_id = Column(Integer)
     action = Column(String)
     target = Column(Integer)
+
 
 def get_data_with_psycopg(query: str):
     '''с помощью SQL запроса через библиотеку pcycopg2
@@ -87,6 +87,7 @@ feed_data'''
     
     return pd.DataFrame([item.__dict__ for item in data_from_db])[columns_name]
 
-if __name__ == "__main__":
+if __name__ == '__main__':
+  
     Base.metadata.create_all(engine)
 

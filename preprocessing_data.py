@@ -35,12 +35,12 @@ def users_processing(input_data):
 
     return df
 
-
 def feed_processing(input_data):
     df = input_data.copy()
     df = df.groupby(['user_id', 'post_id'], as_index=False).sum()
     df['target'] = df['target'].apply(lambda x: int(x > 0))
     df['user_id'].nunique(), df['post_id'].nunique()
+
     return df
 
 # ПРЕДОБРАБОТКА ТЕКСТА
@@ -154,7 +154,6 @@ def push_processed_data():
     posts_df_control_model.to_sql('pobol_posts_df_proc_control', con=engine)
     posts_df_test_model.to_sql('pobol_posts_df_proc_test', con=engine)
     
-
 if __name__ == '__main__':
     push_processed_data()
 
