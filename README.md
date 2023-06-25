@@ -62,18 +62,17 @@
 
 ## [`Анализ результатов A/B тестирования`](https://github.com/vladpobol/notebooks/blob/main/Recommender_system/analysis_of_ab_test_results.ipynb "посмотреть ноутбук")
 
-* Необходимо было понять значимо ли различаются модели по целевой метрике.
-* Hitrate лучшей модели на тестовых данных составил 0.6.
-* Модели сравнивались по двум метрикам
+* Необходимо было понять значимо ли различаются модели по целевым метрикам.
      - Hitrate
 
        <img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/hitrate_models.jpeg">
 
-     - Среднее количество лайков на пользователя
+     - Число лайков на пользователя
  
-       <img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/mean_count_likes.jpeg">
+       <img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/count_likes_per_user.jpeg">
   
-* Были задетектированы статистически значимые различия.
+* В результате анализа задетектированы статистически значимые различия.
+* Hitrate лучшей модели на тестовых данных составил __0.6__.
   
 
 
