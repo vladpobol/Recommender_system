@@ -34,12 +34,12 @@
     - Вычитаем среднее и уменьшаем размерность до 50 колонок.
     - Выделяем 15 кластеров через `KMeans` и считаем расстояния до кластеров.
    
-## [`Получение эмбедингов постов с помощью BERT`](https://github.com/vladpobol/Recommender_system/blob/master/get_embeddings_with_BERT.py "посмотреть код")
+## [`Получение эмбеддингов постов с помощью BERT`](https://github.com/vladpobol/Recommender_system/blob/master/get_embeddings_with_BERT.py "посмотреть код")
 
 * Подготавливаем тексты.
 * Будем использовать предобученую модель и токенайзер.
 * Токенизация слов будем происходить на стадии создания датасета.
-* Проходимся по текстам и получаем эмбединги.
+* Проходимся по текстам и получаем эмбеддинги.
 * Загружаем их в папку "BERT_embeddings".
 
 ## [`Обучение моделей`](https://github.com/vladpobol/notebooks/blob/main/Recommender_system/train_models.ipynb "посмотреть ноутбук")
