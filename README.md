@@ -2,8 +2,8 @@
 
 <img src="https://github.com/vladpobol/Recommender_system/blob/master/plots_and_diagrams/diag_1.drawio.png" alt="Header">
 
-* #### __Решаемая задача__ - Рекомендация 5 постов для юзера по запросу, .
-* #### __Используемый стек__ - `Python` `FastAPI` `Psycopg2` `SQLAlchemy`, `Pandas` `Numpy` `Sklearn` `CatBoost` `Transformers` `PyTorch`
+* #### __Решаемая задача__ - Рекомендация 5 постов для юзера по запросу.
+* #### __Используемый стек__ - `Python` `FastAPI` `Psycopg2` `SQLAlchemy` `Pandas` `Numpy` `Sklearn` `CatBoost` `Transformers` `PyTorch`
 
 ## [`Подключение к базе и выгрузка данных`](https://github.com/vladpobol/Recommender_system/blob/master/connect_database.py "посмотреть код")
 
